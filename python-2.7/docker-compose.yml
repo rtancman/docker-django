@@ -22,7 +22,7 @@ phpmemcachedadmin:
 memcached:
   image: memcached
 web:
-  image: rtancman/docker-django
+  image: rtancman/django
   volumes:
     - ./app:/var/www/html/dev/app
     - ./supervisor:/var/www/html/dev/supervisor
