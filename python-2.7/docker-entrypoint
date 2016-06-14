@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-pip install --no-cache-dir -r ./dev/requirements.txt --upgrade
+pip install --no-cache-dir -r ./site/requirements.txt --upgrade
 
-python ./dev/manage.py migrate
-python ./dev/manage.py collectstatic --noinput
+python ./site/manage.py migrate
+python ./site/manage.py collectstatic --noinput
 
-exec python ./dev/manage.py runserver 0.0.0.0:8000
-#exec service supervisor start
+exec service supervisor start

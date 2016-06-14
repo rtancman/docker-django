@@ -1,38 +1,27 @@
 nginx:
   image: nginx:1.9.5
   ports:
-    - "8102:8102"
+    - "80:80"
   volumes:
-    - ./app:/var/www/html/dev/app
-    - ./docker/nginx/sites-enabled/app_dev.conf:/etc/nginx/conf.d/default.conf
+    - ./app/static:/var/www/html/site/static
+    - ./docker/nginx/sites-enabled/app.conf:/etc/nginx/conf.d/default.conf
   links:
     - web
-db:
-  image: mysql
-  environment:
-    TERM: "dumb"
-    MYSQL_ROOT_PASSWORD: 1234
-phpmemcachedadmin:
-  image: jacksoncage/phpmemcachedadmin
-  ports:
-    - "8103:80"
-    - "8104:443"
-  links:
-    - memcached
+  extra_hosts:
+    - "web.dev:127.0.0.1"
 memcached:
   image: memcached
 web:
-  image: rtancman/django
+  image: rtancman/django:2.7
   volumes:
     - ./app:/var/www/html/dev/app
-    - ./supervisor:/var/www/html/dev/supervisor
-    - ./supervisor/django.ini:/etc/supervisord.d/django.ini
-    - ./docker-entrypoint:/usr/local/bin/eventex-entrypoint
+    - ./logs:/var/www/html/site/logs
+    - ./uwsgi:/var/www/html/site/uwsgi
+    - ./supervisor/django.conf:/etc/supervisor/conf.d/django.conf
+    - ./docker-entrypoint:/usr/local/bin/docker-entrypoint
+    # - ./requirements.txt:/var/www/html/site/requirements.txt
+    # - ./manage.py:/var/www/html/site/manage.py
   ports:
     - "8000:8000"
-  env_file:
-    - ./.env
   links:
     - memcached
-    - db
-  #  command: /usr/local/bin/gunicorn toligado.wsgi:application -w 2 -b :8000
